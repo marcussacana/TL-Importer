@@ -39,12 +39,13 @@ namespace TL_Importer {
         HighLevelCodeProcessator ProcessatorUTS;
         public string[] UTS;
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-            
+            About a = new About();
+            a.Show();
         }
 
         private string[] OpenScript(string FileName, HighLevelCodeProcessator Processator) {
             try {
-                return (string[])Processator.Call("ScriptManager", "Open", new object[] { FileName });
+                return (string[])Processator.Call("ScriptManager", "Open", FileName);
             }
             catch {
                 HighLevelCodeProcessator.Crash();
@@ -52,7 +53,7 @@ namespace TL_Importer {
             }
         }
         private void SaveScript(string As, string[] Content, HighLevelCodeProcessator Processator) {
-            bool rst = (bool)Processator.Call("ScriptManager", "Save", new object[] { As, Content });
+            bool rst = (bool)Processator.Call("ScriptManager", "Save", As, Content);
             if (!rst)
                 HighLevelCodeProcessator.Crash();
         }

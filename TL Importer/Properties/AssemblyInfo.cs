@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TL Importer Engine")]
-[assembly: AssemblyDescription("Engine to Import Script Translations")]
+[assembly: AssemblyTitle("Translation Updater Engine")]
+[assembly: AssemblyDescription("I Write this program to import a outdated translation to a newer version of a game, for this i allow you custom the Open/Save algorithm you are free to edit this code.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("VNX+")]
 [assembly: AssemblyProduct("TL Importer")]

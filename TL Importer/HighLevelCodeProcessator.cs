@@ -3,6 +3,7 @@ using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Globalization;
+using System.Linq;
 
 namespace TL_Importer {
     class HighLevelCodeProcessator {
@@ -29,17 +30,19 @@ namespace TL_Importer {
         /// <param name="FunctionName">Target function name</param>
         /// <param name="Arguments">Function parameters</param>
         /// <returns></returns>
-        public object Call(string ClassName, string FunctionName, object[] Arguments) {
-            return exec(Arguments, ClassName, FunctionName, Engine);
+        public object Call(string ClassName, string FunctionName, params object[] Arguments) { 
+            object ret = exec(Arguments, ClassName, FunctionName, Engine);
+            return ret;
         }
-
+        
+        private object instance = null;
         private object exec(object[] Args, string Class, string Function, Assembly assembly) {
             Type fooType = assembly.GetType(Class);
+            if (instance == null)
+                instance = assembly.CreateInstance(Class);
             MethodInfo printMethod = fooType.GetMethod(Function);
-            object foo = assembly.CreateInstance(Class);
-            return printMethod.Invoke(foo, BindingFlags.InvokeMethod, null, Args, CultureInfo.CurrentCulture);
+            return printMethod.Invoke(instance, BindingFlags.InvokeMethod, null, Args, CultureInfo.CurrentCulture);
         }
-
         private Assembly InitializeEngine(string[] lines) {
             CodeDomProvider cpd = new CSharpCodeProvider();
             var cp = new CompilerParameters();
