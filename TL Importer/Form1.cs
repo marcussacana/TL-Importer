@@ -214,7 +214,7 @@ namespace TL_Importer {
 
             };
             string[] FindDisc = new string[] { "C", "E", "D", "F", "I" };
-            string Editor = "%systemroot%\notepad.exe";
+            string Editor = Environment.SystemDirectory + "\\notepad.exe";
             foreach (string disc in FindDisc)
                 foreach (string Program in FindProgram)
                     if (System.IO.File.Exists(disc + Program)) {
