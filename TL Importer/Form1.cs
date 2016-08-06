@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -101,33 +104,17 @@ namespace TL_Importer {
             UTS = OpenScript(PathOUS.Text, ProcessatorUTS);
             Compare();
         }
-
-        IndexLink[] Links = new IndexLink[0];
-        private bool IsLinked(int index) {
-            foreach (IndexLink link in Links)
-                if (link.Index2 == index)
-                    return true;
-            return false;
-        }
         private void Compare() {
             //UI = UpdatedIndex
             //OI = OutdatedIndex
             for (int UI = 0; UI < OUS.Length; UI++) {
                 string Line = OUS[UI];
-                IndexLink Link = new IndexLink() {
-                    Index1 = UI
-                };
                 for (int OI = 0; OI < OOS.Length; OI++)
-                    if (Line == OOS[OI] && !IsLinked(OI)) {
-                        Link.Index2 = OI;
+                    if (Line == OOS[OI]) {
+                        if (!TranslationDataBase.ContainsKey(Line))
+                            TranslationDataBase.Add(Line, OTS[OI]);
                         break;
                     }
-                if (Link.HaveLink) {
-                    IndexLink[] tmp = new IndexLink[Links.Length + 1];
-                    Links.CopyTo(tmp, 0);
-                    tmp[Links.Length] = Link;
-                    Links = tmp;
-                }
             }
 
             OriginalString.Items.Clear();
@@ -141,32 +128,14 @@ namespace TL_Importer {
         }
 
         private void TranslationString_SelectedIndexChanged(object sender, EventArgs e) {
-            try {
-                int index = TranslationString.SelectedIndex;
-                string status = "Not Found in the Updated Script";
-                foreach (IndexLink link in Links)
-                    if (link.Index2 == index) {
-                        OriginalString.SelectedIndex = link.Index1;
-                        status = string.Format("The outdated string {0} is the {1} updated string", index, link.Index1);
-                        break;
-                    }
-                Status.Text = status;
-            }
-            catch {
-                return;
-            }
         }
 
         private void OriginalString_SelectedIndexChanged(object sender, EventArgs e) {
             try {
                 int index = OriginalString.SelectedIndex;
-                string status = "Not Found in the Outdated Script";
-                foreach (IndexLink link in Links)
-                    if (link.Index1 == index) {
-                        TranslationString.SelectedIndex = link.Index2;
-                        status = string.Format("The updated string {0} is the {1} outdated string", index, link.Index2);
-                        break;
-                    }
+                string status = "Not Found in the Updated Script";
+                if (TranslationDataBase.ContainsKey(UTS[index]))
+                    status = string.Format("Translation Found.");
                 Status.Text = status;
             }
             catch {
@@ -174,12 +143,17 @@ namespace TL_Importer {
             }
         }
 
+        Dictionary<string, string> TranslationDataBase = new Dictionary<string, string>();
         private void exportScriptToolStripMenuItem_Click(object sender, EventArgs e) {
             string file = SaveFile();
             if (file != null) {
-                foreach (IndexLink link in Links) {
-                    UTS[link.Index1] = OTS[link.Index2];
-                }
+                for (int i = 0; i < UTS.Length; i++)
+                    if (TranslationDataBase.ContainsKey(UTS[i]) && !OriginalString.GetItemChecked(i)) {
+                        string TL = TranslationDataBase[UTS[i]];
+                        if (TL == IGNORE)
+                            continue;
+                        UTS[i] = TL;
+                    }
                 SaveScript(file, UTS, ProcessatorUTS);
                 MessageBox.Show("Translation Exported to the Updated Script.", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -225,12 +199,92 @@ namespace TL_Importer {
                 System.IO.File.WriteAllText(Custom, TL_Importer.Properties.Resources.DefaultFunctions, Encoding.UTF8);
             System.Diagnostics.Process.Start(Editor, Custom);
         }
-    }
 
-    public class IndexLink {
-        public int Index1;
-        public int Index2 = -1;
-        public bool HaveLink { get { return Index2 >= 0; } }
-    }
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e) {
+            ExportDataBase();
+            MessageBox.Show("Saved As: \"" + TLDicPath + "\"", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
+        public string TLDicPath { get { return AppDomain.CurrentDomain.BaseDirectory + "TL.DB"; } }
+        public void ImportDataBase() {
+            if (File.Exists(TLDicPath))
+                using (StreamReader SR = new StreamReader(TLDicPath, Encoding.UTF8)) {
+                    while (SR.Peek() != -1) {
+                        string TL = SR.ReadLine();
+                        if (!TL.Contains("\x0"))
+                            continue;
+                        string[] WTL = TL.Split('\x0');
+                        if (!TranslationDataBase.ContainsKey(WTL[0]))
+                            TranslationDataBase.Add(WTL[0], WTL[1]);
+                    }
+                    SR.Close();
+                }
+        }
+
+        public void ExportDataBase() {
+            using (StreamWriter SW = new StreamWriter(TLDicPath, false, Encoding.UTF8)) {
+                for (int i = 0; i < TranslationDataBase.Count; i++) {
+                    bool NotIsLast = (i + 1 < TranslationDataBase.Count);
+                    string WTL = string.Format("{0}\x0{1}", TranslationDataBase.Keys.ElementAt(i), TranslationDataBase.Values.ElementAt(i));
+                    SW.WriteLine(WTL);
+                }
+                SW.Close();
+            }
+        }
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e) {
+            TranslationDataBase.Clear();
+            ImportDataBase();
+            MessageBox.Show("Imported From: \"" + TLDicPath + "\"", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e) {
+            TranslationDataBase.Clear();
+            MessageBox.Show("Database Cleared.", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e) {
+            Form2 frm = new Form2();
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            for (int i = 0; i < UTS.Length; i++)
+                if (UTS[i].Contains(frm.result))
+                        OriginalString.SetItemChecked(i, true);
+        }
+
+        private void changeFilesNameToolStripMenuItem_Click(object sender, EventArgs e) {
+            Form2 frm = new Form2();
+            frm.Text = "Next File Name";
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            PathOOS.Text = System.IO.Path.GetDirectoryName(PathOOS.Text) + "\\" + frm.result;
+            PathOUS.Text = System.IO.Path.GetDirectoryName(PathOUS.Text) + "\\" + frm.result;
+            PathOTS.Text = System.IO.Path.GetDirectoryName(PathOTS.Text) + "\\" + frm.result;
+        }
+
+        private void addBlackListToolStripMenuItem_Click(object sender, EventArgs e) {
+            Form2 frm = new Form2();
+            frm.Text = "Line to add in the black list:";
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            if (TranslationDataBase.ContainsKey(frm.result))
+                TranslationDataBase[frm.result] = IGNORE;
+            else
+                TranslationDataBase.Add(frm.result, IGNORE);
+        }
+        const string IGNORE = "%$:IGNORETRANSLATION:$%";
+
+        private void delBlackListToolStripMenuItem_Click(object sender, EventArgs e) {
+            Form2 frm = new Form2();
+            frm.Text = "Line to remove from black list:";
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            if (TranslationDataBase.ContainsKey(frm.result))
+                TranslationDataBase.Remove(frm.result);
+        }
+    }
 }

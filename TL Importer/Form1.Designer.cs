@@ -34,12 +34,20 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.OriginalString = new System.Windows.Forms.ListBox();
+            this.OriginalString = new System.Windows.Forms.CheckedListBox();
             this.TranslationString = new System.Windows.Forms.ListBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processTranslationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tLDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addBlackListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.delBlackListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeFilesNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAlgoritmsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -193,10 +201,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OriginalString.FormattingEnabled = true;
-            this.OriginalString.ItemHeight = 16;
             this.OriginalString.Location = new System.Drawing.Point(3, 3);
             this.OriginalString.Name = "OriginalString";
-            this.OriginalString.Size = new System.Drawing.Size(396, 340);
+            this.OriginalString.Size = new System.Drawing.Size(396, 344);
             this.OriginalString.TabIndex = 1;
             this.OriginalString.SelectedIndexChanged += new System.EventHandler(this.OriginalString_SelectedIndexChanged);
             // 
@@ -230,7 +237,10 @@
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.processTranslationToolStripMenuItem,
-            this.exportScriptToolStripMenuItem});
+            this.exportScriptToolStripMenuItem,
+            this.tLDatabaseToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.changeFilesNameToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(67, 27);
             this.projectToolStripMenuItem.Text = "Project";
@@ -248,6 +258,67 @@
             this.exportScriptToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
             this.exportScriptToolStripMenuItem.Text = "Export Script";
             this.exportScriptToolStripMenuItem.Click += new System.EventHandler(this.exportScriptToolStripMenuItem_Click);
+            // 
+            // tLDatabaseToolStripMenuItem
+            // 
+            this.tLDatabaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportToolStripMenuItem,
+            this.importToolStripMenuItem,
+            this.clearToolStripMenuItem,
+            this.addBlackListToolStripMenuItem,
+            this.delBlackListToolStripMenuItem});
+            this.tLDatabaseToolStripMenuItem.Name = "tLDatabaseToolStripMenuItem";
+            this.tLDatabaseToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.tLDatabaseToolStripMenuItem.Text = "TL Database";
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.importToolStripMenuItem.Text = "Import";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.clearToolStripMenuItem.Text = "Clear";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            // 
+            // addBlackListToolStripMenuItem
+            // 
+            this.addBlackListToolStripMenuItem.Name = "addBlackListToolStripMenuItem";
+            this.addBlackListToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.addBlackListToolStripMenuItem.Text = "Add BlackList";
+            this.addBlackListToolStripMenuItem.Click += new System.EventHandler(this.addBlackListToolStripMenuItem_Click);
+            // 
+            // delBlackListToolStripMenuItem
+            // 
+            this.delBlackListToolStripMenuItem.Name = "delBlackListToolStripMenuItem";
+            this.delBlackListToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.delBlackListToolStripMenuItem.Text = "Del BlackList/DB";
+            this.delBlackListToolStripMenuItem.Click += new System.EventHandler(this.delBlackListToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(217, 26);
+            this.toolStripMenuItem1.Text = "Ignore Strings";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // changeFilesNameToolStripMenuItem
+            // 
+            this.changeFilesNameToolStripMenuItem.Name = "changeFilesNameToolStripMenuItem";
+            this.changeFilesNameToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.changeFilesNameToolStripMenuItem.Text = "Change File\'s Name";
+            this.changeFilesNameToolStripMenuItem.Click += new System.EventHandler(this.changeFilesNameToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -325,9 +396,17 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editAlgoritmsToolStripMenuItem;
-        private System.Windows.Forms.ListBox OriginalString;
+        private System.Windows.Forms.CheckedListBox OriginalString;
         private System.Windows.Forms.ListBox TranslationString;
         private System.Windows.Forms.ToolStripTextBox Status;
+        private System.Windows.Forms.ToolStripMenuItem tLDatabaseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem changeFilesNameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addBlackListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem delBlackListToolStripMenuItem;
     }
 }
 
