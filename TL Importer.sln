@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TL Importer", "TL Importer\TL Importer.csproj", "{8E22371F-D5A4-42F2-ADA2-BE60FA233F00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiglusSceneManager", "..\SiglusSceneManager\SiglusSceneManager\SiglusSceneManager.csproj", "{B3D4DFF2-530D-43A5-8A53-7CB3E60391A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewritePlusWordWrap", "RewritePlusWordWrap\RewritePlusWordWrap.csproj", "{46268191-DA86-4B3D-9ABF-EFD86232748D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{8E22371F-D5A4-42F2-ADA2-BE60FA233F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E22371F-D5A4-42F2-ADA2-BE60FA233F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E22371F-D5A4-42F2-ADA2-BE60FA233F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D4DFF2-530D-43A5-8A53-7CB3E60391A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D4DFF2-530D-43A5-8A53-7CB3E60391A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D4DFF2-530D-43A5-8A53-7CB3E60391A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D4DFF2-530D-43A5-8A53-7CB3E60391A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46268191-DA86-4B3D-9ABF-EFD86232748D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46268191-DA86-4B3D-9ABF-EFD86232748D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46268191-DA86-4B3D-9ABF-EFD86232748D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46268191-DA86-4B3D-9ABF-EFD86232748D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

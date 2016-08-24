@@ -48,10 +48,12 @@
             this.delBlackListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.changeFilesNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bathOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editAlgoritmsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Status = new System.Windows.Forms.ToolStripTextBox();
+            this.addInDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -240,7 +242,8 @@
             this.exportScriptToolStripMenuItem,
             this.tLDatabaseToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.changeFilesNameToolStripMenuItem});
+            this.changeFilesNameToolStripMenuItem,
+            this.bathOperationToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(67, 27);
             this.projectToolStripMenuItem.Text = "Project";
@@ -266,7 +269,8 @@
             this.importToolStripMenuItem,
             this.clearToolStripMenuItem,
             this.addBlackListToolStripMenuItem,
-            this.delBlackListToolStripMenuItem});
+            this.delBlackListToolStripMenuItem,
+            this.addInDatabaseToolStripMenuItem});
             this.tLDatabaseToolStripMenuItem.Name = "tLDatabaseToolStripMenuItem";
             this.tLDatabaseToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
             this.tLDatabaseToolStripMenuItem.Text = "TL Database";
@@ -274,35 +278,35 @@
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.exportToolStripMenuItem.Text = "Export";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.importToolStripMenuItem.Text = "Import";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // addBlackListToolStripMenuItem
             // 
             this.addBlackListToolStripMenuItem.Name = "addBlackListToolStripMenuItem";
-            this.addBlackListToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.addBlackListToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.addBlackListToolStripMenuItem.Text = "Add BlackList";
             this.addBlackListToolStripMenuItem.Click += new System.EventHandler(this.addBlackListToolStripMenuItem_Click);
             // 
             // delBlackListToolStripMenuItem
             // 
             this.delBlackListToolStripMenuItem.Name = "delBlackListToolStripMenuItem";
-            this.delBlackListToolStripMenuItem.Size = new System.Drawing.Size(194, 26);
+            this.delBlackListToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.delBlackListToolStripMenuItem.Text = "Del BlackList/DB";
             this.delBlackListToolStripMenuItem.Click += new System.EventHandler(this.delBlackListToolStripMenuItem_Click);
             // 
@@ -319,6 +323,13 @@
             this.changeFilesNameToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
             this.changeFilesNameToolStripMenuItem.Text = "Change File\'s Name";
             this.changeFilesNameToolStripMenuItem.Click += new System.EventHandler(this.changeFilesNameToolStripMenuItem_Click);
+            // 
+            // bathOperationToolStripMenuItem
+            // 
+            this.bathOperationToolStripMenuItem.Name = "bathOperationToolStripMenuItem";
+            this.bathOperationToolStripMenuItem.Size = new System.Drawing.Size(217, 26);
+            this.bathOperationToolStripMenuItem.Text = "Bath Operation ";
+            this.bathOperationToolStripMenuItem.Click += new System.EventHandler(this.bathOperationToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -351,6 +362,13 @@
             this.Status.ReadOnly = true;
             this.Status.Size = new System.Drawing.Size(400, 27);
             this.Status.Text = "Waiting...";
+            // 
+            // addInDatabaseToolStripMenuItem
+            // 
+            this.addInDatabaseToolStripMenuItem.Name = "addInDatabaseToolStripMenuItem";
+            this.addInDatabaseToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
+            this.addInDatabaseToolStripMenuItem.Text = "Add in Database";
+            this.addInDatabaseToolStripMenuItem.Click += new System.EventHandler(this.addInDatabaseToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -407,6 +425,8 @@
         private System.Windows.Forms.ToolStripMenuItem changeFilesNameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addBlackListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem delBlackListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bathOperationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addInDatabaseToolStripMenuItem;
     }
 }
 

@@ -1,9 +1,13 @@
-﻿using System;
+﻿#define NOPORTABLE
+
+using SiglusSceneManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+
 
 namespace TL_Importer {
     public partial class Main : Form {
@@ -12,6 +16,8 @@ namespace TL_Importer {
         public Main() {
         again:
             ;
+#if NOPORTABLE
+#else
             string Code = System.IO.File.Exists(Custom) ? System.IO.File.ReadAllText(Custom, Encoding.UTF8) : TL_Importer.Properties.Resources.DefaultFunctions;
             try {
                 ProcessatorOOS = new HighLevelCodeProcessator(Code);
@@ -24,42 +30,93 @@ namespace TL_Importer {
                     goto again;
                 Initialized = false;
             }
+#endif
             InitializeComponent();
         }
+
         //Original Outdated Script
+#if NOPROTABLE
         HighLevelCodeProcessator ProcessatorOOS;
+        HighLevelCodeProcessator ProcessatorOUS;
+        HighLevelCodeProcessator ProcessatorOTS;
+        HighLevelCodeProcessator ProcessatorUTS;
+#else
+        ScriptManager ProcessatorOOS;
+        ScriptManager ProcessatorOUS;
+        ScriptManager ProcessatorOTS;
+        ScriptManager ProcessatorUTS;
+#endif    
         public string[] OOS;
 
         //Original Updated Script
-        HighLevelCodeProcessator ProcessatorOUS;
         public string[] OUS;
 
         //Outdated Translated Script
-        HighLevelCodeProcessator ProcessatorOTS;
         public string[] OTS;
 
         //Update Translated Script
-        HighLevelCodeProcessator ProcessatorUTS;
         public string[] UTS;
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             About a = new About();
             a.Show();
         }
 
-        private string[] OpenScript(string FileName, HighLevelCodeProcessator Processator) {
+#if NOPORTABLE
+        class ScriptManager {
+            public SSManager Script;
+            public string[] Open(string FileName) {
+                if (!File.Exists(FileName))
+                    return new string[0];
+                byte[] data = System.IO.File.ReadAllBytes(FileName);
+                Script = new SSManager(data);
+                Script.Import();
+                return Script.Strings;
+            }
+            public bool Save(string SavePath, string[] NewStrings) {
+                Script.Strings = NewStrings;
+                try {
+                    byte[] data = Script.Export();
+                    System.IO.File.WriteAllBytes(SavePath, data);
+                }
+                catch {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+#endif
+#if NOPORTABLE
+        private string[] OpenScript(string FileName, ref ScriptManager Processator) {
+            Processator = new ScriptManager();
+            return Processator.Open(FileName);
+        }
+
+        private void SaveScript(string As, string[] Content, ScriptManager Processator) {
+            Processator.Save(As, Content);
+        }
+#else
+       private string[] OpenScript(string FileName, HighLevelCodeProcessator Processator, bool IgnoreError, out bool Result) {
             try {
+                Result = true;
                 return (string[])Processator.Call("ScriptManager", "Open", FileName);
             }
             catch {
+                if (IgnoreError) {
+                    Result = false;
+                    return new string[0];
+                }
                 HighLevelCodeProcessator.Crash();
                 throw new Exception();
             }
-        }
+    }
         private void SaveScript(string As, string[] Content, HighLevelCodeProcessator Processator) {
             bool rst = (bool)Processator.Call("ScriptManager", "Save", As, Content);
             if (!rst)
                 HighLevelCodeProcessator.Crash();
         }
+#endif
+
         private void OpenOOS_Click(object sender, EventArgs e) {
             string File = OpenFile();
             PathOOS.Text = File != null ? File : "Select a script...";
@@ -98,13 +155,21 @@ namespace TL_Importer {
                 MessageBox.Show("Open the script before.", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            OOS = OpenScript(PathOOS.Text, ProcessatorOOS);
-            OUS = OpenScript(PathOUS.Text, ProcessatorOUS);
-            OTS = OpenScript(PathOTS.Text, ProcessatorOTS);
-            UTS = OpenScript(PathOUS.Text, ProcessatorUTS);
+#if NOPORTABLE
+            OOS = OpenScript(PathOOS.Text, ref ProcessatorOOS);
+            OUS = OpenScript(PathOUS.Text, ref ProcessatorOUS);
+            OTS = OpenScript(PathOTS.Text, ref ProcessatorOTS);
+            UTS = OpenScript(PathOUS.Text, ref ProcessatorUTS);
+#else
+            bool ig;
+            OOS = OpenScript(PathOOS.Text, ProcessatorOOS, false, out ig);
+            OUS = OpenScript(PathOUS.Text, ProcessatorOUS, false, out ig);
+            OTS = OpenScript(PathOTS.Text, ProcessatorOTS, false, out ig);
+            UTS = OpenScript(PathOUS.Text, ProcessatorUTS, false, out ig);
+#endif
             Compare();
         }
-        private void Compare() {
+        private void Compare(bool DBOnly = false) {
             //UI = UpdatedIndex
             //OI = OutdatedIndex
             for (int UI = 0; UI < OUS.Length; UI++) {
@@ -116,6 +181,8 @@ namespace TL_Importer {
                         break;
                     }
             }
+            if (DBOnly)
+                return;
 
             OriginalString.Items.Clear();
             foreach (string item in OUS) {
@@ -211,7 +278,7 @@ namespace TL_Importer {
                 using (StreamReader SR = new StreamReader(TLDicPath, Encoding.UTF8)) {
                     while (SR.Peek() != -1) {
                         string TL = SR.ReadLine();
-                        if (!TL.Contains("\x0"))
+                        if (!TL.Contains("\x0") || TL.StartsWith("//"))
                             continue;
                         string[] WTL = TL.Split('\x0');
                         if (!TranslationDataBase.ContainsKey(WTL[0]))
@@ -279,12 +346,146 @@ namespace TL_Importer {
 
         private void delBlackListToolStripMenuItem_Click(object sender, EventArgs e) {
             Form2 frm = new Form2();
-            frm.Text = "Line to remove from black list:";
+            frm.Text = "Line to remove from DataBase:";
             frm.ShowDialog();
             if (string.IsNullOrEmpty(frm.result))
                 return;
             if (TranslationDataBase.ContainsKey(frm.result))
                 TranslationDataBase.Remove(frm.result);
+        }
+
+        private void bathOperationToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (!Initialized) {
+                MessageBox.Show("Fix the algorithm problem before.", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if ((PathOOS.Text + PathOUS.Text + PathOTS.Text).Contains("Select a script...")) {
+                MessageBox.Show("Open the script before.", "TL Importer Engine", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            FolderBrowserDialog BD = new FolderBrowserDialog();
+            if (BD.ShowDialog() != DialogResult.OK)
+                return;
+
+            //Prepare Variables
+            TextWriter LOG = File.CreateText(AppDomain.CurrentDomain.BaseDirectory + "Bath Import.log");
+            TextWriter Untranslated = File.CreateText(AppDomain.CurrentDomain.BaseDirectory + "Bath Import Failed.log");
+            PathOOS.Text = System.IO.Path.GetDirectoryName(PathOOS.Text) + "\\";
+            PathOUS.Text = System.IO.Path.GetDirectoryName(PathOUS.Text) + "\\";
+            PathOTS.Text = System.IO.Path.GetDirectoryName(PathOTS.Text) + "\\";
+            string OutDir = BD.SelectedPath;
+            List<string> NotFounds = new List<string>();
+            List<string> Positions = new List<string>();
+
+            if (!OutDir.EndsWith("\\"))
+                OutDir += "\\";
+
+            //Step 1 - Create a Fully Database
+            string[] Scripts = System.IO.Directory.GetFiles(PathOOS.Text, "*.ss");
+            bool[] Okay = new bool[Scripts.Length];
+            for (int i = 0; i < Okay.Length; i++)
+                Okay[i] = true;
+            for (int i = 0; i < Scripts.Length; i++) {
+                string ScriptName = Path.GetFileName(Scripts[i]);
+                if (!File.Exists(PathOUS.Text + ScriptName) || !File.Exists(PathOTS.Text + ScriptName))
+                    Okay[i] = false;
+            }
+            for (int i = 0; i < Scripts.Length; i++) {
+                string ScriptName = Path.GetFileName(Scripts[i]);
+                if (!Okay[i])
+                    LOG.WriteLine("Unable to Append the \"" + ScriptName + "\" in the database.");
+
+                Text = "Importing: " + i + "/" + Scripts.Length;
+#if NOPORTABLE
+                OOS = OpenScript(PathOOS.Text + ScriptName, ref ProcessatorOOS);
+                OUS = OpenScript(PathOUS.Text + ScriptName, ref ProcessatorOUS);
+                OTS = OpenScript(PathOTS.Text + ScriptName, ref ProcessatorOTS);
+#else
+                bool Sucess;
+                OOS = OpenScript(PathOOS.Text + ScriptName, ProcessatorOOS, true, out Sucess);
+                if (!Sucess) {
+                    LOG.WriteLine("Unable to Compare \"" + ScriptName + "\".");
+                    continue;
+                }
+                OUS = OpenScript(PathOUS.Text + ScriptName, ProcessatorOUS, true, out Sucess);
+                if (!Sucess) {
+                    LOG.WriteLine("Unable to Compare \"" + ScriptName + "\".");
+                    continue;
+                }
+                OTS = OpenScript(PathOTS.Text + ScriptName, ProcessatorOTS, true, out Sucess);
+                if (!Sucess) {
+                    LOG.WriteLine("Unable to Compare \"" + ScriptName + "\".");
+                    continue;
+                }
+#endif
+                Compare(true);
+            }
+
+            //Step 2 - Copy Translations
+            Scripts = System.IO.Directory.GetFiles(PathOUS.Text, "*.ss");
+            for (int ind = 0; ind < Scripts.Length; ind++){
+                string Script = Scripts[ind];
+                string ScriptName = Path.GetFileName(Script);
+#if NOPORTABLE
+                UTS = OpenScript(PathOUS.Text + ScriptName, ref ProcessatorUTS);
+#else
+                bool Sucess;
+                UTS = OpenScript(PathOUS.Text + ScriptName, ProcessatorUTS, true, out Sucess);
+                if (!Sucess) {
+                    LOG.WriteLine("Failed to Open the Script: \"" + ScriptName +"\".");
+                    continue;
+                }
+#endif
+                Text = "Translating: " + ind + "/" + Scripts.Length;
+                bool Fully = true;
+                for (int i = 0; i < UTS.Length; i++) {
+                    if (TranslationDataBase.ContainsKey(UTS[i])) {
+                        string Line = TranslationDataBase[UTS[i]];
+                        if (Line == IGNORE) {
+                            continue;
+                        }
+                        else
+                            UTS[i] = Line;
+                    } else {
+                        if (!NotFounds.Contains(UTS[i])) {
+                            Fully = false;
+                            NotFounds.Add(UTS[i]);
+                            Positions.Add(string.Format("//Found At \"{0}\" with ID: {1} Line: {2}", ScriptName, i, ((i * 3) + 5)));
+                        }
+                    }
+                }
+                SaveScript(OutDir + ScriptName, UTS, ProcessatorUTS);
+                LOG.WriteLine("Sucess with \"" + ScriptName + "\" Import. " + (Fully ? "(Complete)" : "(Partial)"));
+            }
+            for (int i = 0; i < NotFounds.Count; i++) {
+                Untranslated.WriteLine(Positions.ElementAt(i));
+                Untranslated.WriteLine(NotFounds.ElementAt(i) + "==" + IGNORE);
+                Untranslated.WriteLine();
+            }
+            //End Algorithm
+            Text = "TL Importer Engine";
+            Untranslated.Close();
+            LOG.Close();
+            MessageBox.Show("Bath Operation Completed!", "TL Impotert Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void addInDatabaseToolStripMenuItem_Click(object sender, EventArgs e) {
+            Form2 frm = new Form2();
+            frm.Text = "Line to add in the Database:";
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            if (TranslationDataBase.ContainsKey(frm.result)) {
+                MessageBox.Show("This entry is actually in the database with the value:\n" + TranslationDataBase[frm.result], "TL Impotert Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            string Entry = frm.result;
+            frm.Text = "Value of this new entry to add:";
+            frm.ShowDialog();
+            if (string.IsNullOrEmpty(frm.result))
+                return;
+            TranslationDataBase.Add(Entry, frm.result);
+            MessageBox.Show("Entry Added.", "TL Impotert Engine", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
